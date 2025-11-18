@@ -137,6 +137,10 @@ padding-top: 15%;
 	color: black;
 }
 
+#contact .click {
+	cursor: pointer;
+}
+
 input[type="submit"]{
 	font-family: 'Syne';
 	font-weight: 700;

@@ -25,37 +25,39 @@ function displayWorks(works) {
   });
 }
 
-// Quand la page est chargée
 document.addEventListener("DOMContentLoaded", async () => {
-  const works = await getWorks(); // On récupère toutes les données
-  displayWorks(works); // On affiche tout au début
+    const works = await getWorks(); // Récupère les travaux depuis l'API
+    displayWorks(works); // Affiche tout au début
 
-  // Sélection des boutons
-  const btnTous = document.querySelector("#btn-tous");
-  const btnObjets = document.querySelector("#btn-objets");
-  const btnAppartements = document.querySelector("#btn-appartements");
-  const btnHotels = document.querySelector("#btn-hotels");
+    const filtersContainer = document.querySelector(".filters");
 
-  // Tous les travaux
-  btnTous.addEventListener("click", () => {
-    displayWorks(works);
-  });
+    // Déclaration des filtres
+    const filters = [
+        { name: "Tous", category: "all" },
+        { name: "Objets", category: "Objets" },
+        { name: "Appartements", category: "Appartements" },
+        { name: "Hôtels & restaurants", category: "Hotels & restaurants" }
+    ];
 
-  // Objets
-  btnObjets.addEventListener("click", () => {
-    const objets = works.filter(work => work.category.name === "Objets");
-    displayWorks(objets);
-  });
+    // Création des boutons
+    filters.forEach(filter => {
+        const btn = document.createElement("button");
+        btn.textContent = filter.name;
+        btn.classList.add("filter-btn");
 
-  // Appartements
-  btnAppartements.addEventListener("click", () => {
-    const appartements = works.filter(work => work.category.name === "Appartements");
-    displayWorks(appartements);
-  });
+        // Ajout de l'événement
+        btn.addEventListener("click", () => {
+            if (filter.category === "all") {
+                displayWorks(works); // Tous les travaux
+            } else {
+                const filteredWorks = works.filter(
+                    work => work.category.name === filter.category
+                );
+                displayWorks(filteredWorks);
+            }
+        });
 
-  // Hôtels & restaurants
-  btnHotels.addEventListener("click", () => {
-    const hotels = works.filter(work => work.category.name === "Hotels & restaurants");
-    displayWorks(hotels);
-  });
+        // On ajoute le bouton dans la div
+        filtersContainer.appendChild(btn);
+    });
 });
