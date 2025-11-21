@@ -1,14 +1,18 @@
-// Fonction 1 : récupère les travaux depuis le back-end
+// --- Fonction 1 : récupère les travaux ---
 async function getWorks() {
   const response = await fetch("http://localhost:5678/api/works");
-  const data = await response.json();
-  return data;
+  return await response.json();
 }
 
-// Fonction 2 : affiche les travaux dans la galerie
+async function getCategories() {
+    const response = await fetch("http://localhost:5678/api/categories");
+    return await response.json();
+}
+
+// --- Fonction 2 : affiche les travaux ---
 function displayWorks(works) {
   const gallery = document.querySelector(".gallery");
-  gallery.innerHTML = ""; // On vide la galerie avant d'afficher
+  gallery.innerHTML = "";
 
   works.forEach(work => {
     const figure = document.createElement("figure");
@@ -25,39 +29,69 @@ function displayWorks(works) {
   });
 }
 
+// --- Quand la page est prête ---
 document.addEventListener("DOMContentLoaded", async () => {
-    const works = await getWorks(); // Récupère les travaux depuis l'API
-    displayWorks(works); // Affiche tout au début
 
+    // 1 Récupération API
+    const works = await getWorks();
+    const categories = await fetch("http://localhost:5678/api/categories")
+                            .then(res => res.json());
+
+    // 2️ Affichage initial : Tous les projets
+    displayWorks(works);
+
+    // 3️ Création des filtres directement ici (Option A)
     const filtersContainer = document.querySelector(".filters");
+    filtersContainer.innerHTML = "";
 
-    // Déclaration des filtres
-    const filters = [
-        { name: "Tous", category: "all" },
-        { name: "Objets", category: "Objets" },
-        { name: "Appartements", category: "Appartements" },
-        { name: "Hôtels & restaurants", category: "Hotels & restaurants" }
-    ];
+    //  Bouton Tous
+    const btnAll = document.createElement("button");
+    btnAll.textContent = "Tous";
+    btnAll.classList.add("filter-btn");
+    btnAll.addEventListener("click", () => displayWorks(works));
+    filtersContainer.appendChild(btnAll);
 
-    // Création des boutons
-    filters.forEach(filter => {
+    // Les boutons catégories venant de l’API
+    categories.forEach(category => {
         const btn = document.createElement("button");
-        btn.textContent = filter.name;
+        btn.textContent = category.name;
         btn.classList.add("filter-btn");
 
-        // Ajout de l'événement
         btn.addEventListener("click", () => {
-            if (filter.category === "all") {
-                displayWorks(works); // Tous les travaux
-            } else {
-                const filteredWorks = works.filter(
-                    work => work.category.name === filter.category
-                );
-                displayWorks(filteredWorks);
-            }
+            const filtered = works.filter(
+                work => work.categoryId === category.id
+            );
+            displayWorks(filtered);
         });
 
-        // On ajoute le bouton dans la div
         filtersContainer.appendChild(btn);
     });
+
+    // 4️ Gestion Login / Logout
+    const token = localStorage.getItem("token");
+    const loginLink = document.getElementById("loginLink");
+
+    if (token) {
+        // Réapparition de la div "modifier"
+        const div = document.querySelector(".projets");
+        div.style.display = "flex";
+
+        // Réapparition de la barre noire
+        const bar = document.querySelector(".blackBar");
+        bar.style.display = "flex";
+
+        // masquer les filtres
+        filtersContainer.style.display = "none";
+
+        loginLink.textContent = "logout";
+        loginLink.href = "#";
+
+        loginLink.addEventListener("click", () => {
+            localStorage.removeItem("token");
+            window.location.reload();
+        });
+    }
 });
+
+
+

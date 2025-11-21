@@ -55,14 +55,31 @@ body {
 }
 header {
 	display: flex;
-	justify-content: space-between;
-	margin: 50px 0
+	flex-direction: column;
 }
+.blackBar {
+    background: black;
+    color: white;
+    width: 100%;
+    height: 50px;
+	
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+	display: none;
+}
+.header-content {
+	display: flex;
+	justify-content: space-between;
+	margin: 40px 0;
+}
+
 section {
 	margin: 50px 0
 }
 
-h1{
+.header-content h1 {
 	display: flex;
 	flex-direction: column;
 	font-family: 'Syne';
@@ -88,8 +105,8 @@ nav ul {
 	display: flex;
 	align-items: center;
 	list-style-type: none;
-
 }
+
 nav li {
 	padding: 0 10px;
 	font-size: 1.2em;
@@ -98,6 +115,11 @@ nav li {
 li:hover {
 	color: #B1663C;
 }
+#loginLink {
+	text-decoration: none;
+	color: black;
+}
+
 #introduction {
 	display: flex;
 	align-items: center;
@@ -121,10 +143,25 @@ li:hover {
 #introduction p {
 	margin-bottom: 0.5em;
 }
+#portfolio {
+	position: relative;
+}
+
 #portfolio h2 {
 	text-align: center;
 	margin-bottom: 1em;
 }
+
+.projets {
+	position: absolute;
+    top: 10px;
+    right: 350px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+	display: none;
+}
+
 .filters {
 	margin-top: 50px;
 	margin-bottom: 50px;
