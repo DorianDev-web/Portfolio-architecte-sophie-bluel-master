@@ -1,7 +1,7 @@
 // --- Fonction 1 : récupère les travaux ---
 async function getWorks() {
-  const response = await fetch("http://localhost:5678/api/works");
-  return await response.json();
+    const response = await fetch("http://localhost:5678/api/works");
+    return await response.json();
 }
 
 async function getCategories() {
@@ -11,22 +11,22 @@ async function getCategories() {
 
 // --- Fonction 2 : affiche les travaux ---
 function displayWorks(works) {
-  const gallery = document.querySelector(".gallery");
-  gallery.innerHTML = "";
+    const gallery = document.querySelector(".gallery");
+    gallery.innerHTML = "";
 
-  works.forEach(work => {
-    const figure = document.createElement("figure");
-    const img = document.createElement("img");
-    const caption = document.createElement("figcaption");
+    works.forEach(work => {
+        const figure = document.createElement("figure");
+        const img = document.createElement("img");
+        const caption = document.createElement("figcaption");
 
-    img.src = work.imageUrl;
-    img.alt = work.title;
-    caption.textContent = work.title;
+        img.src = work.imageUrl;
+        img.alt = work.title;
+        caption.textContent = work.title;
 
-    figure.appendChild(img);
-    figure.appendChild(caption);
-    gallery.appendChild(figure);
-  });
+        figure.appendChild(img);
+        figure.appendChild(caption);
+        gallery.appendChild(figure);
+    });
 }
 
 // --- Quand la page est prête ---
@@ -34,8 +34,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // 1 Récupération API
     const works = await getWorks();
-    const categories = await fetch("http://localhost:5678/api/categories")
-                            .then(res => res.json());
+    const categories = await getCategories();
 
     // 2️ Affichage initial : Tous les projets
     displayWorks(works);
@@ -68,7 +67,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // 4️ Gestion Login / Logout
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     const loginLink = document.getElementById("loginLink");
 
     if (token) {
@@ -87,11 +86,93 @@ document.addEventListener("DOMContentLoaded", async () => {
         loginLink.href = "#";
 
         loginLink.addEventListener("click", () => {
-            localStorage.removeItem("token");
+            sessionStorage.removeItem("token");
             window.location.reload();
         });
-    }
+    };
 });
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+    const token = sessionStorage.getItem("token");
+
+    const modal = document.getElementById("modal");
+    const btnModifier = document.getElementById("btn-modifier");
+    const closeModal = document.getElementById("close-modal");
+    const modalBody = document.querySelector(".modal-body");
+
+
+    // Fonction : Construire la galerie
+     function displayWorksInModal(works) {
+        modalBody.innerHTML = ""; // reset
+
+        works.forEach(work => {
+            const item = document.createElement("div");
+            item.classList.add("modal-item");
+            item.dataset.id = work.id;
+
+            item.innerHTML = `
+                <img src="${work.imageUrl}" alt="${work.title}">
+                <button class="delete-btn" data-id="${work.id}">
+                <img src="./assets/images/Vector2.png" alt="delete">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            `;
+
+            modalBody.appendChild(item);
+        });
+
+        // Ajout des événements pour chaque corbeille
+        document.querySelectorAll(".delete-btn").forEach(btn => {
+            btn.addEventListener("click", deleteWork);
+        });
+    }
+
+    //  Fonction : Supprimer un work (API + DOM)
+    async function deleteWork(e) {
+        const workId = e.currentTarget.dataset.id;
+
+        const response = await fetch(`http://localhost:5678/api/works/${workId}`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if (response.ok) {
+
+            // Retirer dans la modale
+            document.querySelector(`.modal-item[data-id="${workId}"]`)?.remove();
+
+            // Retirer dans la galerie principale
+            document.querySelector(`figure[data-id="${workId}"]`)?.remove();
+
+        }
+    }
+
+    // OUVRIR la modale
+    btnModifier.addEventListener("click", async () => {
+        console.log("Bouton modifier cliqué");
+        modal.style.display = "flex";
+
+        const works = await getWorks();
+        displayWorksInModal(works);
+    });
+
+    // FERMER avec le X
+    closeModal.addEventListener("click", () => {
+        modal.style.display = "none";
+    });
+
+    // FERMER en cliquant sur le fond
+    window.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            modal.style.display = "none";
+        }
+    });
+});
+
+
 
 
 

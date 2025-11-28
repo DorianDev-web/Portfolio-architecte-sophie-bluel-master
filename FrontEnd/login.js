@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             // Token reçu → on le stocke
-            localStorage.setItem("token", data.token);
+            sessionStorage.setItem("token", data.token);
 
             // Redirection vers la page admin ou index
             window.location.href = "index.html";
