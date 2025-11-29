@@ -245,6 +245,109 @@ li:hover {
 	cursor: pointer;
 }
 
+#modal-add-content {
+	display: none;
+	background: white;
+	width: 600px;
+	padding: 30px;
+	border-radius: 10px;
+	position: relative;
+}
+
+#modal-add-content h2 {
+	color: rgba(0, 0, 0, 1);
+	font-size: 26px;
+	font-family: Work Sans;
+}
+
+.modal-body-content {
+	display: block;
+	flex-direction: column;
+	width: 75%;
+	margin: 0 auto;
+}
+
+.upload-box {
+    background: #eef6f9;
+    border-radius: 10px;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px;
+    margin-bottom: 26px;
+  }
+
+.upload-box img {
+	color: gray;
+	width: 76px;
+	height: 76px;
+}
+
+.upload-btn {
+    background: #d1dce5;
+    border: none;
+	width: 50%;
+	text-align: center;
+    padding: 12px 30px;
+    border-radius: 20px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.upload-info {
+    font-size: 14px;
+    margin-top: 10px;
+    color: #666;
+}
+
+/* Champs */
+label {
+    display: block;
+    margin-top: 15px;
+    font-size: 16px;
+    color: #333;
+	margin-bottom: 10px;
+}
+
+input,
+select {
+	width: 100%;
+    height: 48px;
+    padding: 0 14px;
+    font-size: 14px;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    appearance: none;
+	box-sizing: border-box;
+}
+
+.valider {
+	width: 200px;
+	height: 36px;
+	margin-top: 30px;
+	padding: 7px 30px;
+	background-color: rgba(167, 167, 167, 1);
+	color: white;
+	border: none;
+	border-radius: 25px;
+	display: block;
+    margin: 20px auto;
+    cursor: not-allowed;
+}
+
+.back-arrow {
+	position: absolute;
+	left: 20px;
+	top: 15px;
+	font-size: 24px;
+	cursor: pointer;
+}
+
 .filters {
 	margin-top: 50px;
 	margin-bottom: 50px;
