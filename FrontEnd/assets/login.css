@@ -141,6 +141,13 @@ padding-top: 15%;
 	cursor: pointer;
 }
 
+#error {
+	text-align: center;
+	color: red;
+	margin-top: 20px;
+	font-size: 15px;
+}
+
 input[type="submit"]{
 	font-family: 'Syne';
 	font-weight: 700;

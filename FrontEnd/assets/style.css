@@ -162,6 +162,15 @@ li:hover {
 	display: none;
 }
 
+.btn-modifier {
+	background: none;
+    border: none;
+    padding: 0;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+}
+
 .modal {
 	display: none;
 	position: fixed;
@@ -327,6 +336,21 @@ select {
 }
 
 .valider {
+	width: 200px;
+	height: 36px;
+	margin-top: 30px;
+	padding: 7px 30px;
+	background-color: #1D6154;
+	color: white;
+	border: none;
+	border-radius: 25px;
+	display: none;
+    margin: 20px auto;
+    cursor: not-allowed;
+	cursor: pointer;
+}
+
+.valider-inactive {
 	width: 200px;
 	height: 36px;
 	margin-top: 30px;

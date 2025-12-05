@@ -26,11 +26,11 @@ document.addEventListener("DOMContentLoaded", () => {
             // Token reçu → on le stocke
             sessionStorage.setItem("token", data.token);
 
-            // Redirection vers la page admin ou index
+            // Redirection vers la page index
             window.location.href = "index.html";
         }
         catch (error) {
-            document.getElementById("error").textContent = "Erreur serveur";
+            document.getElementById("error").textContent = "Email ou mot de passe incorrect !.";
         }
     });
 });
