@@ -24,7 +24,7 @@ function loadCategories(categories) {
     });
 }
 
-// Affiche les travaux dans la gallerie principale 
+// Affiche les travaux dans la gallerie principale
 function displayWorks(works) {
     const gallery = document.querySelector(".gallery");
     gallery.innerHTML = "";
@@ -41,13 +41,12 @@ function displayWorks(works) {
     });
 }
 
-// ================= DOMCONTENTLOADED ==========================
+// DomContentLoaded
 
 document.addEventListener("DOMContentLoaded", async () => {
 
     const works = await getWorks();
     const categories = await getCategories();
-    const token = sessionStorage.getItem("token");
 
     displayWorks(works);
 
@@ -74,10 +73,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         filtersContainer.appendChild(btn);
     });
 
-    // Mode Édition
+    // Mode édition
+    const tokenAtLoad = sessionStorage.getItem("token");
     const loginLink = document.getElementById("loginLink");
 
-    if (token) {
+    if (tokenAtLoad) {
         document.querySelector(".projets").style.display = "flex";
         document.querySelector(".blackBar").style.display = "flex";
         filtersContainer.style.display = "none";
@@ -91,9 +91,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Modale
-    const modal     = document.getElementById("modal");
+    const modal = document.getElementById("modal");
     const modalGallery = document.getElementById("modal-gallery");
-    const modalAdd  = document.getElementById("modal-add-content");
+    const modalAdd = document.getElementById("modal-add-content");
 
     const btnModifier = document.getElementById("btn-modifier");
     const addPhotoBtn = document.querySelector(".add-photo-btn");
@@ -105,8 +105,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     const closeAdd = document.getElementById("close-gallery");
     const btnBack = document.getElementById("back-to-gallery");
 
-    // Ouverture de la modale
+    // Ouverture de la Modale avec check token
+    btnModifier.addEventListener("click", async () => {
+        const token = sessionStorage.getItem("token");
+        if (!token) {
+            alert("Vous devez être connecté pour modifier.");
+            return;
+        }
+        openModal();
+    });
+
     window.openModal = async function () {
+        const token = sessionStorage.getItem("token");
+        if (!token) return;
+
         modal.style.display = "flex";
         modalAdd.style.display = "none";
         modalGallery.style.display = "block";
@@ -114,9 +126,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         displayWorksInModal(await getWorks());
     };
 
-    btnModifier.addEventListener("click", openModal);
-
-    // Affichage des Works dans la modale
+    // Gallerie Modale
     function displayWorksInModal(works) {
         modalBody.innerHTML = "";
 
@@ -126,9 +136,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             div.dataset.id = work.id;
 
             div.innerHTML = `
-                <img src="${work.imageUrl}" alt="${work.title}">
+                <img src="${work.imageUrl}">
                 <button class="delete-btn" data-id="${work.id}">
-                    <img src="./assets/images/Vector2.png" alt="">
+                    <img src="./assets/images/Vector2.png">
                 </button>
             `;
 
@@ -140,13 +150,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         );
     }
 
-    // Suppression
+    // Suppression des Images
     async function deleteWork(e) {
+        const token = sessionStorage.getItem("token");
+        if (!token) {
+            alert("Session expirée.");
+            return;
+        }
+
         const id = e.currentTarget.dataset.id;
 
         const response = await fetch(`http://localhost:5678/api/works/${id}`, {
             method: "DELETE",
-            headers: { "Authorization": `Bearer ${token}` }
+            headers: { Authorization: `Bearer ${token}` }
         });
 
         if (response.ok) {
@@ -155,14 +171,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // Ouverture Modal ajout photo
+    // Ajout Photo
     addPhotoBtn.addEventListener("click", async () => {
+        const token = sessionStorage.getItem("token");
+        if (!token) {
+            alert("Vous devez être connecté pour ajouter.");
+            return;
+        }
+
         modalGallery.style.display = "none";
         modalAdd.style.display = "block";
 
         modalAddBody.innerHTML = `
             <div class="upload-box" id="upload-box">
-                <img id="preview-icon" src="./assets/images/Vector3.png">
+                <img src="./assets/images/Vector3.png">
                 <label class="upload-btn" for="image-input">+ Ajouter photo</label>
                 <input id="image-input" type="file" accept="image/*" hidden>
                 <p>jpg, png – 4mo max</p>
@@ -175,6 +197,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             <select id="photo-category"></select>
         `;
 
+        loadCategories(await getCategories());
+
         const imageInput = document.getElementById("image-input");
         const titleInput = document.getElementById("photo-title");
         const categoryInput = document.getElementById("photo-category");
@@ -186,24 +210,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         btnActive.style.display = "none";
         btnInactive.style.display = "block";
 
-        loadCategories(await getCategories());
-
-        // Preview Image
-        imageInput.addEventListener("change", () => {
-            const file = imageInput.files[0];
-            if (!file) return;
-
-            uploadBox.innerHTML = "";
-
-            const imgPreview = document.createElement("img");
-            imgPreview.src = URL.createObjectURL(file);
-            imgPreview.classList.add("preview-image");
-
-            uploadBox.appendChild(imgPreview);
-            checkForm();
-        });
-
-        // Activer bouton si formulaire ok
         function checkForm() {
             const ok =
                 imageInput.files.length > 0 &&
@@ -214,11 +220,29 @@ document.addEventListener("DOMContentLoaded", async () => {
             btnInactive.style.display = ok ? "none" : "block";
         }
 
+        imageInput.addEventListener("change", () => {
+            const file = imageInput.files[0];
+            if (!file) return;
+
+            uploadBox.innerHTML = "";
+            const img = document.createElement("img");
+            img.src = URL.createObjectURL(file);
+            img.classList.add("preview-image");
+            uploadBox.appendChild(img);
+
+            checkForm();
+        });
+
         titleInput.addEventListener("input", checkForm);
         categoryInput.addEventListener("change", checkForm);
 
-        // Envoi du Formulaire
+        // Envoie du Formulaire
         btnActive.onclick = async () => {
+            const token = sessionStorage.getItem("token");
+            if (!token) {
+                alert("Session expirée.");
+                return;
+            }
 
             const formData = new FormData();
             formData.append("image", imageInput.files[0]);
@@ -227,22 +251,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             const response = await fetch("http://localhost:5678/api/works", {
                 method: "POST",
-                headers: { "Authorization": `Bearer ${token}` },
+                headers: { Authorization: `Bearer ${token}` },
                 body: formData
             });
 
             if (response.ok) {
-                const newWork = await response.json();
-
-                const gallery = document.querySelector(".gallery");
-                const figure = document.createElement("figure");
-                figure.dataset.id = newWork.id;
-                figure.innerHTML = `
-                    <img src="${newWork.imageUrl}" alt="${newWork.title}">
-                    <figcaption>${newWork.title}</figcaption>
-                `;
-                gallery.appendChild(figure);
-
+                displayWorks(await getWorks());
                 displayWorksInModal(await getWorks());
 
                 modalAdd.style.display = "none";
@@ -251,13 +265,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         };
     });
 
-    // Retour
-    btnBack.addEventListener("click", () => {
+    // Navigation
+    btnBack.onclick = () => {
         modalAdd.style.display = "none";
         modalGallery.style.display = "block";
-    });
+    };
 
-    // Fermeture
     closeModal.onclick = closeAdd.onclick = () => modal.style.display = "none";
     window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
 });

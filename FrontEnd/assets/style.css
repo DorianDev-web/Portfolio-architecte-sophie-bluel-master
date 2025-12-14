@@ -291,8 +291,8 @@ li:hover {
 
 .upload-box img {
 	color: gray;
-	width: 76px;
-	height: 76px;
+	width: 150px;
+	height: auto;
 }
 
 .upload-btn {
